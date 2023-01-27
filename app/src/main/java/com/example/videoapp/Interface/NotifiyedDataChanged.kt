@@ -1,0 +1,4 @@
+
+interface notifiyedDataChanged {
+    fun dataChanged()
+}

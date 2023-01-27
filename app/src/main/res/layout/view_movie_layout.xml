@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+     <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="match_parent"
+              android:layout_height="270dp"
+              android:id="@+id/movieLayout"
+              android:paddingBottom="5dp"
+         android:background="@color/white"
+         app:layout_constraintTop_toTopOf="parent"
+         >
+        <ImageView
+               android:layout_width="match_parent"
+               android:layout_height="200dp"
+               android:id="@+id/movieImage"
+               android:scaleType="fitXY"
+               app:layout_constraintTop_toTopOf="parent"
+               app:layout_constraintStart_toStartOf="parent" />
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/movieName"
+                  android:textColor="@color/black"
+                  app:layout_constraintBottom_toTopOf="@id/movieDate"
+                  app:layout_constraintTop_toBottomOf="@id/movieImage"
+                  app:layout_constraintStart_toStartOf="parent"
+                  android:text="movie"
+                  android:layout_margin="10dp"/>
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/movieType"
+                  android:textSize="14sp"
+                  android:textColor="@color/black"
+                  app:layout_constraintBottom_toBottomOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  android:text="action"
+                  android:layout_margin="10dp"/>
+              <androidx.appcompat.widget.AppCompatTextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/movieDate"
+                  android:textSize="14sp"
+                  android:textColor="@color/black"
+                  app:layout_constraintBottom_toBottomOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  android:text="2017"
+                  android:layout_margin="10dp"
+                  />
+
+          </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
