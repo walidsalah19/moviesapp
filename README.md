@@ -4,7 +4,7 @@ display movies
 - Kotlin
 - Retrofit
 - DI
-- MVVM as architecture
+- MVVM 
 - Coroutin
 - DataBinding
 - Navigation Component
