@@ -11,8 +11,8 @@ class MoviesViewModule(private val repo: MoviesListRepo ) :ViewModel() {
     private var mData= MutableLiveData<ArrayList<MoviesModel>>()
     fun intialViewModel(mFragment: Fragment)
     {
-        var mmodel= repo.initializeModel(mFragment)
-        mData=mmodel.liveData()
+        repo.initializeModel(mFragment)
+        mData=repo.liveData()
         Log.d("error", "er4")
     }
     fun getData(): MutableLiveData<ArrayList<MoviesModel>> {

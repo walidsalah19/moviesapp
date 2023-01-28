@@ -1,11 +1,10 @@
 package com.example.videoapp.MVVM.Details
 
 import Api
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import com.example.videoapp.MVVM.List.MoviesListRepo
 import com.example.videoapp.Models.MovieDetailsModel
-import com.example.videoapp.MoviesModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -13,27 +12,19 @@ import kotlinx.coroutines.withContext
 import notifiyedDataChanged
 import kotlin.properties.Delegates
 
-class MovieDetailsRepo {
-    private  lateinit var api: Api
-    private val BASE_URL="https://yts.mx/api/v2/"
+class MovieDetailsRepo (private val api:Api){
     private  var moviesDetails= ArrayList<MovieDetailsModel>()
-
-    companion object
-    {
-        private lateinit var notifyChange: notifiyedDataChanged
-        private var id by Delegates.notNull<Int>()
-        fun initializeModel(mFragment: Fragment,id:Int): MovieDetailsRepo
+    private lateinit var notifyChange: notifiyedDataChanged
+    private var id :Int?=null
+    fun initializeModel(mFragment: Fragment,id:Int)
         {
             this.id=id
             notifyChange =mFragment as notifiyedDataChanged
-            return MovieDetailsRepo()
-
         }
-    }
     private  fun getData() {
-        api = Retrofit.getRetrofit(BASE_URL).create(Api::class.java)
         GlobalScope.launch (Dispatchers.IO) {
             val response = api.getMovieDetails(id);
+            Log.e("id2",id.toString())
             withContext(Dispatchers.Main)
             {
                 moviesDetails.add(response)
@@ -44,11 +35,10 @@ class MovieDetailsRepo {
 
     fun liveData(): MutableLiveData<ArrayList<MovieDetailsModel>>
     {
+        moviesDetails.clear()
         getData()
         var mMutable= MutableLiveData<ArrayList<MovieDetailsModel>>()
-        if (moviesDetails!=null) {
-            mMutable.postValue(moviesDetails)
-        }
+        mMutable.postValue(moviesDetails)
         return mMutable
     }
 }

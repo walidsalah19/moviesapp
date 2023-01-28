@@ -1,13 +1,14 @@
 package com.example.videoapp.UI
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,46 +25,52 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.DefaultPlayerUiController
 import notifiyedDataChanged
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import kotlin.math.min
+
 
 class MovieDetails : Fragment() , notifiyedDataChanged{
     private lateinit var  mBinding:FragmentMovieDetailsBinding;
-    private lateinit var viewModel:DetailsViewModule
+    private  val viewModel:DetailsViewModule by sharedViewModel()
     private  var images=ArrayList<String>()
     private  var casts=ArrayList<cast>()
 
-    private lateinit var imageAdapter:ScreenShotsAdapter
-    private lateinit var castAdapter:CastAdapter
+    private val imageAdapter:ScreenShotsAdapter by lazy {
+        ScreenShotsAdapter(images,this)
+    }
+    private val castAdapter:CastAdapter  by lazy {
+         CastAdapter(casts,this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         mBinding= FragmentMovieDetailsBinding.inflate(inflater,container,false)
-        val id= requireArguments().getInt("id")
-        val synopsis=requireArguments().getString("synopsis")
+        var id= requireArguments().getInt("id")
+        Log.e("id",id.toString())
+        var synopsis=requireArguments().getString("synopsis")
 
         initializeRecyclerView()
-
-        goBack()
-        viewModel= ViewModelProvider(this).get(DetailsViewModule::class.java)
         viewModel.intialViewModel(this,id)
         mBinding.synopsisText.text=synopsis
 
-
+        goBack()
+        changeToolbar()
+        statusBarColor()
         return mBinding.root
     }
     private fun initializeRecyclerView()
     {
-        imageAdapter=ScreenShotsAdapter(images,this)
         mBinding.screenShotsRecycler.apply {
             layoutManager=LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL,true)
         }
-        castAdapter= CastAdapter(casts,this)
         mBinding.CastRecycler.apply {
             layoutManager=LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL,true)
         }
@@ -84,7 +91,19 @@ class MovieDetails : Fragment() , notifiyedDataChanged{
             displayTrailer(it.get(0).data.movie.trailer)
             displayScreenShots(it.get(0).data.movie.image1,it.get(0).data.movie.image2,it.get(0).data.movie.image3)
             displayCast(it.get(0).data.movie.cast)
+            setBackground(it.get(0).data.movie.backgroundImage)
+            setToolbarTitle(it.get(0).data.movie.title)
         }
+    }
+    private fun setToolbarTitle(title:String)
+    {
+        mBinding.title.text=title
+    }
+    private fun setBackground(image:String)
+    {
+        Glide.with(requireContext()).load(image)
+            .into( mBinding.background)
+
     }
 
     private fun displayCast(cast: List<cast>) {
@@ -123,9 +142,6 @@ class MovieDetails : Fragment() , notifiyedDataChanged{
                 var defaultPlayerUiController: DefaultPlayerUiController =
                     DefaultPlayerUiController(mBinding.youtubePlayerView, youTubePlayer)
                 mBinding.youtubePlayerView.setCustomPlayerUi(defaultPlayerUiController.rootView)
-                defaultPlayerUiController.showDuration(true)
-                defaultPlayerUiController.showDuration(false)
-
             }
             override fun onError(youTubePlayer: YouTubePlayer, error: PlayerConstants.PlayerError) {
                 super.onError(youTubePlayer, error)
@@ -146,5 +162,46 @@ class MovieDetails : Fragment() , notifiyedDataChanged{
             genres+=i+"\t"
         }
         mBinding.type.text=genres
+    }
+    @SuppressLint("ResourceAsColor")
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun changeToolbar()
+    {
+        mBinding.toolbar.visibility=View.INVISIBLE
+        mBinding.title.visibility=View.INVISIBLE
+
+        mBinding.nestedScrollview.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            if(scrollY==0)
+            {
+                mBinding.toolbar.visibility=View.INVISIBLE
+                mBinding.title.visibility=View.INVISIBLE
+            }
+            else {
+                mBinding.toolbar.visibility = View.VISIBLE
+                mBinding.title.visibility=View.VISIBLE
+                 val color = changeAppBarAlpha(
+                     ContextCompat.getColor(requireContext(), R.color.color1),
+                     (min(255, scrollY).toFloat() / 255.0f).toDouble()
+                 )
+                mBinding.toolbar.setBackgroundColor(color)
+            }
+        }
+    }
+   private fun changeAppBarAlpha(color: Int, fraction: Double): Int {
+        val red: Int = Color.red(color)
+        val green: Int = Color.green(color)
+        val blue: Int = Color.blue(color)
+        val alpha: Int = (Color.alpha(color) * fraction).toInt()
+        return Color.argb(alpha, red, green, blue)
+    }
+    private fun statusBarColor()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val window: Window = requireActivity().window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.statusBarColor = resources.getColor(R.color.color1)
+
+        }
     }
 }

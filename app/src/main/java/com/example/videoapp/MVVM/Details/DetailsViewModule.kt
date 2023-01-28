@@ -6,13 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.videoapp.Models.MovieDetailsModel
 
-class DetailsViewModule : ViewModel() {
+class DetailsViewModule (private val repo:MovieDetailsRepo): ViewModel() {
 
     private var mData= MutableLiveData<ArrayList<MovieDetailsModel>>()
     fun intialViewModel(mFragment: Fragment,id:Int)
     {
-        var mmodel= MovieDetailsRepo.initializeModel(mFragment,id)
-        mData=mmodel.liveData()
+        repo.initializeModel(mFragment,id)
+        mData=repo.liveData()
         Log.d("error", "er4")
     }
     fun getData(): MutableLiveData<ArrayList<MovieDetailsModel>> {

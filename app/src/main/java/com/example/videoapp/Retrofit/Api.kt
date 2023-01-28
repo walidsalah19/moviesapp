@@ -15,6 +15,6 @@ interface Api {
 
   @GET("movie_details.json?&with_images=true&with_cast=true")
   suspend fun getMovieDetails(
-      @Query("movie_id") id:Int
+      @Query("movie_id") id:Int?
   ):MovieDetailsModel
 }

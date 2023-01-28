@@ -7,18 +7,14 @@ import com.example.videoapp.MoviesModel
 import kotlinx.coroutines.*
 import notifiyedDataChanged
 
-class MoviesListRepo {
-    private  lateinit var api: Api
-    private val BASE_URL="https://yts.mx/api/v2/"
+class MoviesListRepo(private val api: Api) {
     private  var moviesModel= ArrayList<MoviesModel>()
     lateinit var notifyChange: notifiyedDataChanged
-    fun initializeModel(mFragment: Fragment): MoviesListRepo
+    fun initializeModel(mFragment: Fragment)
     {
         notifyChange =mFragment as notifiyedDataChanged
-        return MoviesListRepo()
     }
     private  fun getData() {
-        api = Retrofit.getRetrofit(BASE_URL).create(Api::class.java)
         GlobalScope.launch (Dispatchers.IO) {
             val response = api.getMovies();
             withContext(Dispatchers.Main)
@@ -30,11 +26,10 @@ class MoviesListRepo {
     }
     fun liveData(): MutableLiveData<ArrayList<MoviesModel>>
     {
+        moviesModel.clear()
         getData()
         var mMutable= MutableLiveData<ArrayList<MoviesModel>>()
-        if (moviesModel!=null) {
-            mMutable.postValue(moviesModel)
-        }
+        mMutable.postValue(moviesModel)
         return mMutable
     }
 

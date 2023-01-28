@@ -10,7 +10,10 @@ class appModule :Application() {
         startKoin {
             androidContext(this@appModule)
             modules(listOf(
-
+                viewModule,
+                moviesListRepo,
+                moviesDetailsRepo,
+                api
             ))
         }
     }
