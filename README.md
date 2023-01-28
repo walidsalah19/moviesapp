@@ -1,12 +1,12 @@
 # moviesapp
 display movies
 # Technologies used
-- Kotlin\
-- Retrofit\
-- DI\
-- MVVM as architecture\
-- Coroutin\
-- DataBinding\
+- Kotlin
+- Retrofit
+- DI
+- MVVM as architecture
+- Coroutin
+- DataBinding
 - Navigation Component
 # view
 
